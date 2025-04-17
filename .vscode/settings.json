@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5488,
+            "driver": "PostgreSQL",
+            "name": "local",
+            "database": "a2a_service",
+            "username": "a2a_service",
+            "password": "a2a_service"
+        }
+    ]
+}

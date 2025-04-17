@@ -39,7 +39,6 @@ class Agent:
         # Initialize the LLM model
         self.model = ChatOpenAI(
             model=model_name,
-            temperature=0.1,
             streaming=True
         )
         

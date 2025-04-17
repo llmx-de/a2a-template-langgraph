@@ -1,0 +1,15 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: a2a_service
+      POSTGRES_PASSWORD: a2a_service
+      POSTGRES_DB: a2a_service
+    ports:
+      - "5488:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

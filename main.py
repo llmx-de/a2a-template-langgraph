@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from a2a_service.server import A2AServer
 from a2a_service.models import AgentCapabilities, AgentSkill, AgentCard
 from a2a_service.agent import Agent
-from a2a_service.task_managers.async_inmem_task_manager import AgentTaskManager
+from a2a_service.task_managers.db_task_manager import DatabaseTaskManager
 
 # Load environment variables
 load_dotenv()
@@ -16,10 +16,11 @@ logger = logging.getLogger(__name__)
 # Server configuration
 HOST = os.getenv("HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", 10000))
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1")
+MODEL = os.getenv("OPENAI_MODEL", "o4-mini")
 
 # Create agent capabilities and skills
 capabilities = AgentCapabilities(streaming=False, pushNotifications=False)
+
 skill = AgentSkill(
     id="information_retrieval",
     name="Information Retrieval",
@@ -46,8 +47,8 @@ def main():
         # Initialize agent with specified model
         agent = Agent(model_name=MODEL)
         
-        # Create task manager
-        task_manager = AgentTaskManager(agent=agent)
+        # Create database-backed task manager
+        task_manager = DatabaseTaskManager(agent=agent)
         
         # Create and start server
         server = A2AServer(
