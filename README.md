@@ -69,7 +69,9 @@ Your agent server will be live on `http://{HOST}:{PORT}`.
 │   ├── agent.py           # LangGraph agent implementation
 │   ├── server.py          # A2A HTTP server
 │   ├── database.py        # Database connection setup
-│   ├── models/            # Data models and schemas
+│   ├── types.py           # All data types and models for the A2A protocol
+│   ├── models/            # Database models 
+│   │   └── db_models.py   # SQLAlchemy database models
 │   ├── task_managers/     # Task management modules
 │   │   ├── __init__.py    # Base task manager interface
 │   │   ├── db_task_manager.py  # DB-backed task manager
@@ -91,6 +93,7 @@ Your agent server will be live on `http://{HOST}:{PORT}`.
 - **FastAPI** & **Uvicorn** for HTTP server  
 - **PostgreSQL** via **SQLAlchemy** & **Alembic** migrations  
 - **OpenAI** for LLM capabilities  
+- **Pydantic** for data validation and serialization
 
 ## 🔌 Extending the Agent
 
