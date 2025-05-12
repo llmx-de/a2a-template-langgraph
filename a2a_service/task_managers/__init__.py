@@ -2,7 +2,7 @@ from typing import List
 import asyncio
 import logging
 from a2a_service.agent import Agent
-from a2a_service.models import (
+from a2a_service.types import (
     TaskState,
     Message,
     TaskStatus,

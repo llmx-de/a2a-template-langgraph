@@ -3,7 +3,7 @@ import asyncio
 import logging
 import traceback
 from a2a_service.agent import Agent
-from a2a_service.models import (
+from a2a_service.types import (
     TaskState,
     Message,
     TaskStatus,
@@ -18,7 +18,8 @@ from a2a_service.models import (
     TaskStatusUpdateEvent,
     InternalError,
     InvalidParamsError,
-    JSONRPCResponse
+    JSONRPCResponse,
+    TextPart
 )
 from a2a_service.task_managers import InMemoryTaskManager
 
@@ -40,22 +41,26 @@ class AgentTaskManager(InMemoryTaskManager):
                 require_user_input = item["require_user_input"]
                 artifact = None
                 message = None
-                parts = [{"type": "text", "text": item["content"]}]
+                # Convert raw content to TextPart for Message, keep as dict for Artifact
+                content_text = item["content"]
+                text_parts_for_message = [TextPart(text=content_text)]
+                parts_for_artifact = [{"type": "text", "text": content_text}]
                 end_stream = False
 
                 if not is_task_complete and not require_user_input:
                     # Agent is still working
                     task_state = TaskState.WORKING
-                    message = Message(role="agent", parts=parts)
+                    message = Message(role="agent", parts=text_parts_for_message)
                 elif require_user_input:
                     # Agent needs more input from the user
                     task_state = TaskState.INPUT_REQUIRED
-                    message = Message(role="agent", parts=parts)
+                    message = Message(role="agent", parts=text_parts_for_message)
                     end_stream = True
                 else:
                     # Agent has completed the task
                     task_state = TaskState.COMPLETED
-                    artifact = Artifact(parts=parts, index=0, append=False)
+                    # Make sure we use dictionaries for parts, not TextPart objects
+                    artifact = Artifact(parts=parts_for_artifact, index=0, append=False)
                     end_stream = True
 
                 task_status = TaskStatus(state=task_state, message=message)
@@ -190,17 +195,20 @@ class AgentTaskManager(InMemoryTaskManager):
         task_id = task_send_params.id
         task_status = None
 
-        parts = [{"type": "text", "text": agent_response["content"]}]
+        # Convert raw content to TextPart for Message, keep as dict for Artifact
+        content_text = agent_response["content"]
+        text_parts_for_message = [TextPart(text=content_text)]
+        parts_for_artifact = [{"type": "text", "text": content_text}]
         artifact = None
         
         if agent_response["require_user_input"]:
             task_status = TaskStatus(
                 state=TaskState.INPUT_REQUIRED,
-                message=Message(role="agent", parts=parts),
+                message=Message(role="agent", parts=text_parts_for_message),
             )
         else:
             task_status = TaskStatus(state=TaskState.COMPLETED)
-            artifact = Artifact(parts=parts)
+            artifact = Artifact(parts=parts_for_artifact)
             
         task = await self.update_store(
             task_id, task_status, None if artifact is None else [artifact]
@@ -230,19 +238,19 @@ class AgentTaskManager(InMemoryTaskManager):
             parts = task_send_params.message["parts"]
             self.logger.info(f"Found message parts (dict): {parts}")
             
-            for part in parts:
-                if part.get("type") == "text":
-                    text = part.get("text", "")
+            for part_dict in parts: # renamed part to part_dict to avoid conflict
+                if part_dict.get("type") == "text": # part is a dict here
+                    text = part_dict.get("text", "")
                     self.logger.info(f"Extracted text from part: {text}")
                     return text
         # Handle case where message is a Message object with parts attribute
         elif hasattr(task_send_params.message, "parts"):
-            parts = task_send_params.message.parts
+            parts = task_send_params.message.parts # parts is List[TextPart] here
             self.logger.info(f"Found message parts (object): {parts}")
             
-            for part in parts:
-                if part.get("type") == "text":
-                    text = part.get("text", "")
+            for part_obj in parts: # renamed part to part_obj
+                if part_obj.type == "text": # part_obj is a TextPart object
+                    text = part_obj.text
                     self.logger.info(f"Extracted text from part: {text}")
                     return text
                     

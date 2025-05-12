@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Dict, Any
 import uvicorn
-from a2a_service.models import AgentCapabilities, AgentSkill, AgentCard, SendTaskRequest, TaskSendParams, SendTaskStreamingRequest, Message, TextPart
+from a2a_service.types import AgentCapabilities, AgentSkill, AgentCard, SendTaskRequest, TaskSendParams, SendTaskStreamingRequest, Message, TextPart
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ class A2AServer:
                     # Create a proper Message object with text part
                     return Message(
                         role="user", 
-                        parts=[{"type": "text", "text": text}]
+                        parts=[TextPart(text=text)]
                     )
             return None
                         

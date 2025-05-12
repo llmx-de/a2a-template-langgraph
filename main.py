@@ -2,7 +2,7 @@ import os
 import logging
 from dotenv import load_dotenv
 from a2a_service.server import A2AServer
-from a2a_service.models import AgentCapabilities, AgentSkill, AgentCard
+from a2a_service.types import AgentCapabilities, AgentSkill, AgentCard
 from a2a_service.agent import Agent
 from a2a_service.task_managers.db_task_manager import DatabaseTaskManager
 

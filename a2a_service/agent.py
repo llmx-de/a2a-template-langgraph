@@ -5,7 +5,7 @@ from langchain_core.messages import AIMessage, ToolMessage
 from typing import Any, Dict, AsyncIterable, Literal, List, Optional, Union
 from pydantic import BaseModel
 from langchain_openai import ChatOpenAI
-from a2a_service.models.response import ResponseFormat
+from a2a_service.types import ResponseFormat
 from a2a_service.tools import search_web
 
 # Memory saver for maintaining conversation state
