@@ -1,0 +1,57 @@
+# Version control
+.git
+.gitignore
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+.env
+.venv/
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific
+.pytest_cache/
+coverage_html/
+.coverage
+htmlcov/
+
+# Temporary files
+tmp/
+temp/
+
+# Docker related
+.docker/
+docker-compose.override.yml
+
+# Log files
+*.log
+
+# Local database volumes
+postgres_data/ 

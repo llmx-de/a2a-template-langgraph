@@ -14,9 +14,11 @@ A production-ready agent server built with [LangGraph](https://github.com/langgr
 
 ## 🔧 Quick Start
 
+### Option 1: Local Installation
+
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/dmi3coder/a2a_template_langgraph.git
+   git clone https://github.com/llmx-de/a2a_template_langgraph.git
    cd a2a_template_langgraph
    ```
 
@@ -30,7 +32,7 @@ A production-ready agent server built with [LangGraph](https://github.com/langgr
 3. **Set up PostgreSQL**
    Use the included Docker Compose file to start a PostgreSQL instance:
    ```bash
-   docker-compose up -d
+   docker-compose up -d postgres
    ```
 
 4. **Configure**
@@ -47,7 +49,32 @@ A production-ready agent server built with [LangGraph](https://github.com/langgr
    python main.py
    ```
 
-Your agent server will be live on `http://{HOST}:{PORT}`.
+### Option 2: Docker Deployment
+
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/llmx-de/a2a_template_langgraph.git
+   cd a2a_template_langgraph
+   ```
+
+2. **Configure**
+   Create a `.env` file:
+   ```env
+   OPENAI_API_KEY=your_openai_api_key
+   OPENAI_MODEL=o4-mini # Optional, defaults to o4-mini
+   ```
+
+3. **Build and run with Docker Compose**
+   ```bash
+   docker-compose up -d
+   ```
+
+   This will:
+   - Start a PostgreSQL database
+   - Run database migrations automatically
+   - Start the A2A agent server
+
+Your agent server will be live on `http://localhost:10000`.
 
 ## 🛠️ API Endpoints
 
@@ -94,6 +121,23 @@ Your agent server will be live on `http://{HOST}:{PORT}`.
 - **PostgreSQL** via **SQLAlchemy** & **Alembic** migrations  
 - **OpenAI** for LLM capabilities  
 - **Pydantic** for data validation and serialization
+- **Docker & Docker Compose** for containerization and deployment
+
+## 🐳 Docker Support
+
+This project includes full Docker support for development and deployment:
+
+- **Dockerfile**: Builds the A2A LangGraph Agent application
+- **docker-compose.yaml**: Orchestrates the application with PostgreSQL and automatic migrations
+- **Automatic Database Migration**: Runs Alembic migrations on startup
+- **Smart Entrypoint Script**: Handles database waiting, migrations, and application startup
+
+The Docker setup provides:
+- Automatic database initialization and migrations
+- Proper dependency ordering (database → migrations → application)
+- Health checks to ensure services are ready before dependent services start
+
+Note: While the project recommends UV for local development, the Docker build uses pip for compatibility and reliability in containerized environments.
 
 ## 🔌 Extending the Agent
 

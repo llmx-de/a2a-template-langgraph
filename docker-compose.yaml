@@ -10,6 +10,45 @@ services:
       - "5488:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - a2a_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U a2a_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migration:
+    build: .
+    command: migrate
+    environment:
+      - DATABASE_URL=postgresql://a2a_service:a2a_service@postgres:5432/a2a_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - a2a_network
+
+  agent:
+    build: .
+    command: start
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgresql://a2a_service:a2a_service@postgres:5432/a2a_service
+      - OPENAI_MODEL=${OPENAI_MODEL:-o4-mini}
+    ports:
+      - "10000:10000"
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    networks:
+      - a2a_network
+    volumes:
+      - ./.env:/app/.env
+
+networks:
+  a2a_network:
+    driver: bridge
 
 volumes:
   postgres_data:
